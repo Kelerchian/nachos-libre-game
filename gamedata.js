@@ -10,7 +10,7 @@ function Gamedata(gameobjects,input,activeCamera){
 	
 	//CANVAS FILTER
 	gameobjects.gFilter["Night"].push(
-			new GFilter(GFilterMode.DARKEN,"rgb(20,30,79)",0.5)
+			new GFilter(GFilterMode.DARKEN,"rgb(20,30,79)",0.2)
 		);
 	
 	//PLAYER CHARACTER
