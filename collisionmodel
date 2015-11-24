@@ -1,0 +1,17 @@
+function CollisionModel(){
+}
+
+Driver: Main Activity
+-tombol refresh
+-fragment 1 (jika nganggur direfresh)
+	-list of jobs
+-fragment 2 (jika on duty, sudah menerima list of jobs)
+	-active job preview -> kalo di klik, masuk ke Driver Detail Activity
+
+Driver: Detail Activity
+-tombol refresh
+-label: detail pelanggan, tipe servis, asal, tujuan
+-button: masuk ke GMaps Activity
+
+Driver: GMaps Activity
+-tunjukin pelanggan di mana, tujannya di mana
