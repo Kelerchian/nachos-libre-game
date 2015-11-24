@@ -1,7 +1,8 @@
 // Kley Engine miniversion
 var ctx;
+var canvas;
 window.onload = function () {
-    var canvas = new Canvasmanager("maincanvas");
+    canvas = new Canvasmanager("maincanvas");
         canvas.resize();
     
     ctx = canvas.getContext('2d');

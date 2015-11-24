@@ -174,17 +174,14 @@ var Physics = {}
 					}
 				}
 				else if(coltype2 == CollisionType.GRABBABLE){
-					return
+					obj2.affectStaticCollision(obj1);
 				}
 				else if(coltype2 == CollisionType.VOLUME){
 					return
 				}
 			}
 			else if(coltype1 == CollisionType.DYNAMIC){
-				if(coltype2 == CollisionType.STATIC){
-					return
-				}
-				else if(coltype2 == CollisionType.DYNAMIC){
+				if(coltype2 == CollisionType.DYNAMIC){
 					return
 				}
 				else if(coltype2 == CollisionType.GRABBABLE){
@@ -195,13 +192,7 @@ var Physics = {}
 				}
 			}
 			else if(coltype1 == CollisionType.GRABBABLE){
-				if(coltype2 == CollisionType.STATIC){
-					return
-				}
-				else if(coltype2 == CollisionType.DYNAMIC){
-					return
-				}
-				else if(coltype2 == CollisionType.GRABBABLE){
+				if(coltype2 == CollisionType.GRABBABLE){
 					return
 				}
 				else if(coltype2 == CollisionType.VOLUME){
@@ -209,16 +200,7 @@ var Physics = {}
 				}
 			}
 			else if(coltype1 == CollisionType.VOLUME){
-				if(coltype2 == CollisionType.STATIC){
-					return
-				}
-				else if(coltype2 == CollisionType.DYNAMIC){
-					return
-				}
-				else if(coltype2 == CollisionType.GRABBABLE){
-					return
-				}
-				else if(coltype2 == CollisionType.VOLUME){
+				if(coltype2 == CollisionType.VOLUME){
 					return
 				}
 			}
@@ -293,7 +275,6 @@ var Physics = {}
 		if(outofbound == true){
 			return false;
 		}
-		
 		/*
 		if (circle.getX() - circle.getR() > right) {
 			return false
@@ -309,13 +290,7 @@ var Physics = {}
 		}
 		*/
 		return Physics.isCollideLineCircle(limitedline, circle)
-	
 	}	
-
-
-
-
-
 
 
 function CollisionModel(collisiontype) {
@@ -386,7 +361,6 @@ function LineFunc(ptA, ptB) {
 }
 
 function linePointDistance(line, point) {
-	
 	var vert = point.getY() - line.getPointIfX(point.getX()).getY();
 	var horz = point.getX() - line.getPointIfY(point.getY()).getX();
 	var miring = Math.sqrt(vert * vert + horz * horz);

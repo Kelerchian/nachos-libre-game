@@ -5,6 +5,13 @@ function Gamedata(gameobjects,input,activeCamera){
 	gameobjects.addTopLayer("PlayerChar");               //DEBUG: menyalakan mapgrid pada graphic
 	gameobjects.addTopLayer("Projectiles");
 	gameobjects.addTopLayer("Buildings");
+	gameobjects.addTopGFilter("Night");
+	
+	
+	//CANVAS FILTER
+	gameobjects.gFilter["Night"].push(
+			new GFilter(GFilterMode.DARKEN,"rgb(20,30,79)",0.5)
+		);
 	
 	//PLAYER CHARACTER
     var playerChar = createPlayerCharacter("PlayerCharacter",0,0,0,input);

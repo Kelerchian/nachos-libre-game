@@ -386,6 +386,7 @@ function Bullet(x,y){
 	var size = 3;
 	var collisionModel = new CollisionModel(CollisionType.GRABBABLE);
 		collisionModel.buildCircleModel(size);
+	var isTrash = false;
 	
 	function setSpeedHeading(speed,heading){
 		var vx = speed*Math.cos(heading);
@@ -404,6 +405,9 @@ function Bullet(x,y){
 	function process(){
 		position.translate(physicalAttribute.getSpeed().x,physicalAttribute.getSpeed().y)
 		
+		if(isTrash){
+			throw "isTrash";
+		}
 		if(KleyMath.distanceFromPointToPoint(position,sourcePosition)>Bullet.distanceLimit){
 			throw "isTrash";
 		}
@@ -420,6 +424,9 @@ function Bullet(x,y){
 		}
 		public.getCollisionModel = function(){
 			return collisionModel;
+		}
+		public.affectStaticCollision = function(obj){
+			isTrash = true;
 		}
 		public.draw = function(){
 			draw();

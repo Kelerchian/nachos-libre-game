@@ -60,6 +60,28 @@ function Game(canvasid) {
                 jerr(e.message, Error.ERROR);
             }
         }
+        gameobjects.gFilter = [];
+        gameobjects.addTopGFilter = function(gFiltername){
+            if(gFiltername in gameobjects.gFilter){
+            }
+            else{
+                gameobjects.gFilter[gFiltername] = new Array();
+            }
+        }
+        gameobjects.addBottomGFilter = function(gFiltername){
+            if (gFiltername in gameobjects.gFilter) {
+            }
+            else{
+                gameobjects.gFilter.unshift(gFiltername);
+                gameobjects.gFilter[gFiltername] = [];
+            }
+        }
+        gameobjects.clearGFilter = function (layername) {     //menghapus objek-objek yang terdapat dalam suatu layer
+            try {
+                gameobjects.gFilter[layername] = [];
+            } catch (e) {
+            }
+        }
         gameobjects.mapgrid = new MapGrid();                            //mapgrid -> lihat mapgrid.js
         gameobjects.mapgrid.setUnit(100)                                 //menset unit panjang dan lebar tiap grid
         gameobjects.mapgrid.setGridSize(60,60);                         //menset ukuran mapgrid
@@ -103,6 +125,20 @@ function Game(canvasid) {
                 }
                 catch (e) {
                     jerr(e.message, Error.ERROR);
+                }
+                ctx.restore();
+            }
+        }
+        
+        ctx.translate(activeCamera.getX(),activeCamera.getY())  
+        for(var i in gameobjects.gFilter){
+            for(var j in gameobjects.gFilter[i]){
+                ctx.save();
+                try{
+                    gameobjects.gFilter[i][j].draw();
+                }
+                catch(e){
+                    console.warn(e)
                 }
                 ctx.restore();
             }
