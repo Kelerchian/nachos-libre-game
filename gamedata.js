@@ -3,6 +3,7 @@ function Gamedata(gameobjects,input,activeCamera){
 	gameobjects.mapgrid.setUnit(100)
 	gameobjects.mapgrid.isToBeDrawn = false;                   //DEBUG: menyalakan mapgrid pada graphic
 	gameobjects.addTopLayer("PlayerChar");               //DEBUG: menyalakan mapgrid pada graphic
+	gameobjects.addTopLayer("Cops");
 	gameobjects.addTopLayer("Projectiles");
 	gameobjects.addTopLayer("Buildings");
 	gameobjects.addTopGFilter("Night");
@@ -18,6 +19,10 @@ function Gamedata(gameobjects,input,activeCamera){
 	playerChar.setInput(input,activeCamera);
 	gameobjects.layer["PlayerChar"].push(playerChar)
 	
+	
+	//COP TEST
+	var copTes = createCop("cop",30,30,0);
+	gameobjects.layer["Cops"].push(copTes);
 	
 	activeCamera.bindToObject(playerChar);
 	//BUILDING

@@ -60,6 +60,13 @@ function Game(canvasid) {
                 jerr(e.message, Error.ERROR);
             }
         }
+        gameobjects.searchObjectByNameInLayer = function(name,layername){
+            for(var i in gameobjects.layer[layername]){
+                if(i.getName() == name){
+                    return gameobjects.layer[layername][i];
+                }
+            }
+        }
         gameobjects.gFilter = [];
         gameobjects.addTopGFilter = function(gFiltername){
             if(gFiltername in gameobjects.gFilter){

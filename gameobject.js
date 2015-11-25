@@ -2,7 +2,7 @@
 function PlayerCharacter(){
 	var name = "playercharacter";
 	var position = new Position(0,0);
-	var heading = 10;
+	var heading = 0;
 	var size = 25;
 	var collisionModel = new CollisionModel(CollisionType.DYNAMIC);
 		collisionModel.buildCircleModel(size);
@@ -86,6 +86,9 @@ function PlayerCharacter(){
 		public.setName = function(newName){
 			name = newName
 		}
+		public.getName = function(){
+			return name;
+		}
 		public.setPosition = function(x,y){
 			position.set(x,y);
 		}
@@ -138,35 +141,87 @@ function Cop(){
 	var position = new Position(0,0);
 	var heading = 0;
 	var size = 25;
-	var color = "white";
-	var intention=[];
-	var keyboardReader = null;
-	var physics;
-	
+	var collisionModel = new CollisionModel(CollisionType.DYNAMIC);
+		collisionModel.buildCircleModel(size);
+	var color = "rgb(0,0,60)";
+	var physicalAttribute = new PhysicalAttribute();
+	var accelerationForce = 30
+	var activeCamera = null;
+	var guntrigger = false;
 	function draw(){
-		ctx.fillStyle = "blue";
+		ctx.fillStyle = color;
+		ctx.strokeStyle = "black";
 		ctx.translate(position.getX(),position.getY());
-		ctx.rotate(heading*Math.PI);
+		ctx.rotate(heading);
+		ctx.beginPath();
 		ctx.arc(0,0,size,0,2*Math.PI,false);
+		ctx.fill();
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.arc(0,0,size*8,-Math.PI/5,Math.PI/5,false)
+		ctx.fillStyle="rgba(127,127,127,0.5)"
+		ctx.lineTo(0,0);
+		ctx.closePath()
+		ctx.fill()
+	}
+	function detectPlayerChar(){
+		var pchar = gameobjects.searchObjectByNameInLayer("playercharacter","PlayerChar");
+		var theading;
+		if(isNaN(heading)){
+			theading = 0
+		}
+		else{
+			theading = heading
+		}
+		ctx.arc(position.getX(),position.getY(),size*8,heading-Math.PI/5,heading+Math.PI/5,false)
+	}
+	function shoot(){
+		var bullet = new Bullet(position.getX(),position.getY());
+		bullet.setSpeedHeading(Bullet.speed,heading)
+		gameobjects.layer["Projectiles"].push(bullet);
+	}
+	function process(){
+		position.translate(physicalAttribute.getSpeed().x,physicalAttribute.getSpeed().y)
 	}
 	var public = {};
+		public.getX = function(){
+			return position.getX();
+		}
+		public.getY = function(){
+			return position.getY();
+		}
+		public.getPhysicalAttribute = function(){
+			return physicalAttribute
+		}
+		public.getCollisionModel = function(){
+			return collisionModel;
+		}
 		public.setName = function(newName){
 			name = newName
+		}
+		public.getName = function(){
+			return name;
 		}
 		public.setPosition = function(x,y){
 			position.set(x,y);
 		}
 		public.slideLeft = function(){
-			
+			physicalAttribute.applyForceX(-accelerationForce)
 		}
 		public.slideRight = function(){
-			
+			physicalAttribute.applyForceX(accelerationForce)
 		}
 		public.slideUp = function(){
-			
+			physicalAttribute.applyForceY(-accelerationForce)
 		}
 		public.slideDown = function(){
-			
+			physicalAttribute.applyForceY(accelerationForce)
+		}
+		public.stopX = function(){
+			physicalAttribute.toZeroSpeedX();
+		}
+		public.stopY = function(){
+			physicalAttribute.toZeroSpeedY();
 		}
 		public.enableKeyboardReader = function(inputObject){
 			keyboardReader = new KeyboardReader(inputObject);
@@ -181,13 +236,16 @@ function Cop(){
 			KleyMath.limit(rad,-1,1)
 			heading = rad;
 		}
+		public.setActiveCamera = function(nActiveCamera){
+			activeCamera = nActiveCamera;
+		}
 		public.draw = function(){
 			draw()
 		}
 		public.process = function(){
 			process();
 		}
-	return public
+	return public;
 }
 
 function BangunanTes(){
