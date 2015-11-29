@@ -100,3 +100,18 @@ var KleyMath = {}
 			}
 		}
 	}
+	KleyMath.between = function(no1,no2,no3){
+		if((no1<no2 && no2<no3) || (no1>no2 && no2>no3)){
+			return true
+		}
+		return false
+	}
+	KleyMath.average = function(arrayofinteger){
+		var numbers=Array.prototype.slice.call(arguments, 0);
+		var result = 0
+		for(var i = 0; i<numbers.length ; i++){
+			result += numbers[i]
+		}
+		result/=numbers.length;
+		return result
+	}

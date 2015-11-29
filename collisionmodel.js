@@ -330,10 +330,26 @@ function CollisionModel(collisiontype) {
 	return public;
 }
 
+var LineFuncMType = {
+	NORMAL : 1,
+	HORIZONTAL : 2,
+	VERTICAL : 3
+}
+
 function LineFunc(ptA, ptB) {
 	var b = ptA.getY() - ptB.getY();
 	var a = ptA.getX() - ptB.getX();
 	var c = ptA.getY() * b - ptA.getX() * a;
+	var type;
+	if(a==0){
+		type=LineFuncMType.VERTICAL
+	}
+	else if(b==0){
+		type=LineFuncMType.HORIZONTAL
+	}
+	else{
+		type=LineFuncMType.VERTICAL
+	}
 	var public = {}
 	public.getA = function () {
 		return a;
@@ -356,6 +372,9 @@ function LineFunc(ptA, ptB) {
 	public.getPtB = function () {
 		return ptB;
 	}
+	public.getType = function(){
+		return type;
+	}
 	public.getPointIfY = function (y) {
 		if(a==0){
 			return Point(ptA.getX(),y);
@@ -371,8 +390,76 @@ function LineFunc(ptA, ptB) {
 	return public;
 }
 
-function lineToline(line1,line2){
+function lineAndLine(line1,line2){
+	//FUNCTION
+	function horizontalAndHorizontal(line1,line2){
+		if(line1.getPt1().getY()==line2.getPt1.getY()){
+			if(KleyMath.between(line2.getPt1().getX() , line1.getPt1().getX() , line2.getPt2().getX()) ||
+			KleyMath.between(line2.getPt1().getX() , line1.getPt2().getX() , line2.getPt2().getX()) || 
+			KleyMath.between(line1.getPt1().getX() , line2.getPt1().getX() , line1.getPt2().getX()) ||
+			KleyMath.between(line1.getPt1().getX() , line2.getPt2().getX() , line1.getPt2().getX())
+			){
+				return Point(
+					KleyMath.average(line1.getPt1().getX(), line1.getPt2().getX(), line2.getPt1().getX(), line2.getPt2().getX()),
+					line1.getPt1().gety()
+				)
+			}
+		}
+		return false;
+	}
+	function verticalAndVertical(line1,line2){
+		if(line1.getPt1().getX()==line2.getPt1.getX()){
+			if(KleyMath.between(line2.getPt1().getY() , line1.getPt1().getY() , line2.getPt2().getY()) ||
+			KleyMath.between(line2.getPt1().getY() , line1.getPt2().getY() , line2.getPt2().getY()) || 
+			KleyMath.between(line1.getPt1().getY() , line2.getPt1().getY() , line1.getPt2().getY()) ||
+			KleyMath.between(line1.getPt1().getY() , line2.getPt2().getY() , line1.getPt2().getY())
+			)
+			return Point(
+				line1.getPt1().getX(),
+				KleyMath.average(line1.getPt1().getY(), line1.getPt2().getY(), line2.getPt1().getY(), line2.getPt2().getY())
+			)
+		}
+		return false;
+	}
+	function horizontalAndVertical(line1,line2){
+		var pX = line2.getPt1.getX();
+		var pY = line1.getPt1.getY();
+		if(!KleyMath.between(line1.getPt1.getX(),pX,line1.getPt2.getX())){
+			return false;
+		}
+		if(!KleyMath.between(line2.getPt1.getY(),pY,line2.getPt2.getY())){
+			return false;
+		}
+		return Point(pX,pY)
+	}
+	function normalAndNormal(line1,line2){
+		//http://mafia.mafiaol.com/2014/05/cara-menentukan-titik-potong-dua-garis.html
+	}
+	function normalAndHorizontal(line1,line2){
+		
+	}
+	function normalAndVertical(line1,line2){
+		
+	}
 	
+	
+	//DETECTION STARTS
+	if(line1.getType() == LineFuncMType.HORIZONTAL){
+		if(line2.getType() == LineFuncMType.HORIZONTAL){
+			return horizontalAndHorizontal(line1,line2)
+		}
+		else if(line2.getType() == LineFuncMType.VERTICAL){
+			return horizontalAndVertical(line1,line2)
+		}
+	}
+	else if(line1.getType() == LineFuncMType.VERTICAL){
+		if(line2.getType() == LineFuncMType.VERTICAL){
+			return verticalAndVertical(line1,line2)
+		}
+		else if(line2.getType() == LineFuncMType.HORIZONTAL){
+			return horizontalAndVertical(line2,line1)
+		}
+	}
 }
 
 function linePointDistance(line, point) {
