@@ -62,7 +62,7 @@ function Game(canvasid) {
         }
         gameobjects.searchObjectByNameInLayer = function(name,layername){
             for(var i in gameobjects.layer[layername]){
-                if(i.getName() == name){
+                if(gameobjects.layer[layername][i].getName() == name){
                     return gameobjects.layer[layername][i];
                 }
             }
@@ -91,7 +91,7 @@ function Game(canvasid) {
         }
         gameobjects.mapgrid = new MapGrid();                            //mapgrid -> lihat mapgrid.js
         gameobjects.mapgrid.setUnit(100)                                 //menset unit panjang dan lebar tiap grid
-        gameobjects.mapgrid.setGridSize(60,60);                         //menset ukuran mapgrid
+        gameobjects.mapgrid.setGridSize(61,60);                         //menset ukuran mapgrid
         gameobjects.mapgrid.setCenter(15,15);                           //menset grid mana yang menjadi titik tengah
         gameobjects.mapgrid.initialize();                               //menginisialisasi grid -> lihat mapgrid.js
         
@@ -126,18 +126,40 @@ function Game(canvasid) {
         
         for (var i in gameobjects.layer) {                          //draw objects pada gameobjects
             for (var j in gameobjects.layer[i]) {
-                ctx.save();
-                try {
-                    gameobjects.layer[i][j].draw();
+                var draw = true;
+                if (typeof gameobjects.layer[i][j].getRadius == 'function') {
+                    if(gameobjects.layer[i][j].getX()+gameobjects.layer[i][j].getRadius() > activeCamera.getX()-canvas.getWidth()/2*Game.gamescale &&
+                    gameobjects.layer[i][j].getX()-gameobjects.layer[i][j].getRadius() < activeCamera.getX()+canvas.getWidth()/2*Game.gamescale && 
+                    gameobjects.layer[i][j].getY()+gameobjects.layer[i][j].getRadius() > activeCamera.getX()-canvas.getHeight()/2*Game.gamescale &&
+                    gameobjects.layer[i][j].getY()-gameobjects.layer[i][j].getRadius() < activeCamera.getX()+canvas.getHeight()/2*Game.gamescale
+                    ){
+                        draw = true;
+                    }                
                 }
-                catch (e) {
-                    jerr(e.message, Error.ERROR);
+                else if(typeof gameobjects.layer[i][j].getWidth == 'function'){
+                    if(gameobjects.layer[i][j].getX()+gameobjects.layer[i][j].getWidth() > activeCamera.getX()-canvas.getWidth()/2*Game.gamescale &&
+                    gameobjects.layer[i][j].getX()-gameobjects.layer[i][j].getHeight() < activeCamera.getX()+canvas.getWidth()/2*Game.gamescale && 
+                    gameobjects.layer[i][j].getY()+gameobjects.layer[i][j].getWidth() > activeCamera.getX()-canvas.getHeight()/2*Game.gamescale &&
+                    gameobjects.layer[i][j].getY()-gameobjects.layer[i][j].getHeight() < activeCamera.getX()+canvas.getHeight()/2*Game.gamescale
+                    ){
+                        draw = true;
+                    }  
                 }
-                ctx.restore();
+                if(draw){
+                    ctx.save();
+                    try {
+                        gameobjects.layer[i][j].draw();
+                    }
+                    catch (e) {
+                        jerr(e.message, Error.ERROR);
+                    }
+                    ctx.restore();
+                }
             }
         }
         
         ctx.translate(activeCamera.getX(),activeCamera.getY())  
+        ctx.scale(1/Game.gamescale,1/Game.gamescale);
         for(var i in gameobjects.gFilter){
             for(var j in gameobjects.gFilter[i]){
                 ctx.save();

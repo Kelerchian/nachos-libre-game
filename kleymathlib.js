@@ -41,7 +41,6 @@ var KleyMath = {}
 		
 		var interval = topLimit - bottomLimit;
 		while (numberToBeLimited > topLimit) {
-			console.log(numberToBeLimited)
 			numberToBeLimited -= interval;
 		}
 		while (numberToBeLimited < bottomLimit) {

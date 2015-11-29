@@ -21,6 +21,7 @@ var CollisionType = {
 	DYNAMIC: 2,
 	GRABBABLE: 3,
 	VOLUME: 4,
+	NONE: 5,
 	DEFAULT: 1
 }
 
@@ -32,6 +33,14 @@ var CollisionModelType = {
 var Physics = {}
 	Physics.collide = function (obj1, obj2) {
 		if(obj1==obj2){
+			return
+		}
+		var modtype1 = obj1.getCollisionModel().getModel().type;
+		var modtype2 = obj2.getCollisionModel().getModel().type;
+		var coltype1 = obj1.getCollisionModel().getCollisionType();
+		var coltype2 = obj2.getCollisionModel().getCollisionType();
+		var position;
+		if(modtype1 == CollisionType.NONE || modtype2 == CollisionType.NONE){
 			return
 		}
 		function getColPosSquareSquare(square1, square2) {
@@ -135,16 +144,12 @@ var Physics = {}
 				var colY = y2dibawah == true ? (y1 + colRangeY) : (y1 - colRangeY)
 	
 				return new Position(colX, colY);
+				console.log(2)
 			}
 			else {
 				return false;
 			}
 		}
-		var modtype1 = obj1.getCollisionModel().getModel().type;
-		var modtype2 = obj2.getCollisionModel().getModel().type;
-		var coltype1 = obj1.getCollisionModel().getCollisionType();
-		var coltype2 = obj2.getCollisionModel().getCollisionType();
-		var position;
 		
 		function getColPos(){
 			if (modtype1 == CollisionModelType.CIRCLE && modtype2 == CollisionModelType.CIRCLE) {
@@ -339,6 +344,12 @@ function LineFunc(ptA, ptB) {
 	public.getC = function () {
 		return c;
 	}
+	public.getM = function(){
+		return a/b
+	}
+	public.getTrueC = function(){
+		return c/b
+	}
 	public.getPtA = function () {
 		return ptA;
 	}
@@ -358,6 +369,10 @@ function LineFunc(ptA, ptB) {
 		return Point(x, (public.getA() * x + public.getC()) / public.getB())
 	}
 	return public;
+}
+
+function lineToline(line1,line2){
+	
 }
 
 function linePointDistance(line, point) {

@@ -1,6 +1,14 @@
 //OBJECTS
+var Allegiance = {
+	PLAYER : 1,
+	ENEMY : 2,
+	FRIENDLY :3,
+	HOSTAGE : 4
+}
+
 function PlayerCharacter(){
-	var name = "playercharacter";
+	var allegiance = Allegiance.PLAYER;
+	var name = "PlayerCharacter";
 	var position = new Position(0,0);
 	var heading = 0;
 	var size = 25;
@@ -34,6 +42,7 @@ function PlayerCharacter(){
 	function shoot(){
 		var bullet = new Bullet(position.getX(),position.getY());
 		bullet.setSpeedHeading(Bullet.speed,heading)
+		bullet.setAllegiance = allegiance;
 		gameobjects.layer["Projectiles"].push(bullet);
 	}
 	function followMouse(){
@@ -76,6 +85,9 @@ function PlayerCharacter(){
 		}
 		public.getY = function(){
 			return position.getY();
+		}
+		public.getPosition=function(){
+			return position;
 		}
 		public.getPhysicalAttribute = function(){
 			return physicalAttribute
@@ -127,6 +139,12 @@ function PlayerCharacter(){
 			input = inputObject;
 			activeCamera = newActiveCamera;
 		}
+		public.setAllegiance = function(alleg){
+			allegiance = alleg
+		}
+		public.getAllegiance = function(){
+			return allegiance;
+		}
 		public.draw = function(){
 			draw()
 		}
@@ -137,10 +155,15 @@ function PlayerCharacter(){
 }
 
 function Cop(){
+	var self = null;
+	var allegiance = Allegiance.ENEMY;
 	var name = "cop";
 	var position = new Position(0,0);
 	var heading = 0;
+	var headingAccel = 0;
+	var headingAccelLimit = Math.PI/5;
 	var size = 25;
+	var searchLightSize = 200;
 	var collisionModel = new CollisionModel(CollisionType.DYNAMIC);
 		collisionModel.buildCircleModel(size);
 	var color = "rgb(0,0,60)";
@@ -148,6 +171,31 @@ function Cop(){
 	var accelerationForce = 30
 	var activeCamera = null;
 	var guntrigger = false;
+	var alert = false;
+	var knownEnemies = [];
+	var knownThreats = [];
+	var seenEnemies = [];
+	var seenHostage = [];
+	var seenMafia = [];
+	var panic = 0;
+	var nearbyCops = 0;
+	
+	function isInKnownEnemies(obj){
+		for(var i = 0; i<knownEnemies.length; i++){
+			if(obj == knownEnemies[i]){
+				return true;
+			}
+		}
+		return false;
+	}
+	function isInKnownThreats(obj){
+		for(var i = 0; i<knownThreats.length; i++){
+			if(obj == knownThreats[i]){
+				return true;
+			}
+		}
+		return false;
+	}
 	function draw(){
 		ctx.fillStyle = color;
 		ctx.strokeStyle = "black";
@@ -158,29 +206,145 @@ function Cop(){
 		ctx.fill();
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.arc(0,0,size*8,-Math.PI/5,Math.PI/5,false)
+		ctx.arc(0,0,searchLightSize,-Math.PI/4,Math.PI/4,false)
 		ctx.fillStyle="rgba(127,127,127,0.5)"
 		ctx.lineTo(0,0);
 		ctx.closePath()
 		ctx.fill()
 	}
-	function detectPlayerChar(){
-		var pchar = gameobjects.searchObjectByNameInLayer("playercharacter","PlayerChar");
-		var theading;
-		if(isNaN(heading)){
-			theading = 0
+	function see(){
+		if(alert){
+			searchLightSize = 400
 		}
 		else{
-			theading = heading
+			searchLightSize = 200
 		}
-		ctx.arc(position.getX(),position.getY(),size*8,heading-Math.PI/5,heading+Math.PI/5,false)
+		var theading = heading
+		if(isNaN(theading)){
+			theading = 0
+		}
+		nearbyCops = 0;
+		seenEnemies = []
+		seenHostage = []
+		seenMafia = []
+		ctx.save()
+		ctx.beginPath()
+		ctx.arc(position.getX(),position.getY(),searchLightSize,theading-Math.PI/4,theading+Math.PI/4,false)
+		ctx.lineTo(position.getX(),position.getY())
+		ctx.closePath()
+		for(var i in gameobjects.layer["PlayerChar"]){
+			var obj = gameobjects.layer["PlayerChar"][i]
+			if(ctx.isPointInPath(obj.getX(),obj.getY())){
+				seenEnemies.push(obj);
+			}
+		}
+		for(var i in gameobjects.layer["Mafia"]){
+			var obj = gameobjects.layer["Mafia"][i]
+			if(ctx.isPointInPath(obj.getX(),obj.getY())){
+				seenMafia.push(obj);
+			}
+		}
+		for(var i in gameobjects.layer["Hostage"]){
+			var obj = gameobjects.layer["Hostage"][i]
+			if(ctx.isPointInPath(obj.getX(),obj.getY())){
+				seenHostage.push(obj);
+			}
+		}
+		for(var i in gameobjects.layer["Cops"]){
+			var obj = gameobjects.layer["Cops"][i]
+			if(obj==self){
+				break;
+			}
+			var rangeX = obj.getX() - position.getY()
+			var rangeY = obj.getY() - position.getY()
+			var distance = Math.sqrt(rangeX*rangeX+rangeY*rangeY);
+			if(distance < 600){
+				nearbyCops+=1
+			}
+		}
+		ctx.restore();
+	}
+	function identify(){
+		for(var i in seenEnemies){
+			if(!isInKnownEnemies(seenEnemies[i])){
+				knownEnemies.push(seenEnemies[i]);
+			}
+		}
+		for(var i in seenMafia){
+			if(!isInKnownThreats(seenMafia[i])){
+				knownThreats.push(seenMafia[i]);
+			}
+		}
+	}
+	function reflex(){
+		alert = 0
+		panic = 0
+		if(seenEnemies.length>0){
+			alert = 1;
+		}
+		if(seenHostage.length>0){
+			alert = 1;
+		}
+		if(seenMafia.length>0){
+			alert = 1;
+		}
+		if(seenMafia.length>0){
+			panic = 1;
+		}
+	}
+	function think(){
+		//SET HEADING
+		var idle = false;
+		var headingDest = heading;
+		var headingControl = 0;
+		if(seenEnemies.length>0){
+			var enemy = seenEnemies[0];
+			
+			var x = (enemy.getX())-position.getX();
+			var y = (enemy.getY())-position.getY();
+			var cosA = x/(Math.sqrt(x*x+y*y));
+			var tanA = y/x;
+			headingDest = Math.atan(tanA);
+			if(cosA>=0){
+			}
+			else{
+				headingDest+=Math.PI
+			}
+			if(isNaN(headingDest)){
+				headingDest = heading
+			}
+			headingDest = KleyMath.limitMod(headingDest,heading-Math.PI,heading+Math.PI);
+			headingControl+=headingDest-heading;
+		}
+		else{
+			idle = true
+		}
+		
+		//SETMOTION
+		if(!idle){	
+			headingAccel += headingControl/800
+			if(headingControl<Math.PI/3 && headingControl>-Math.PI/6){
+				headingAccel = KleyMath.limit(headingAccel,-headingControl/10,headingControl/10);
+			}
+		}
+		if(idle){
+			headingAccel = KleyMath.toZero(headingAccel,Math.PI/8000)
+		}
 	}
 	function shoot(){
 		var bullet = new Bullet(position.getX(),position.getY());
 		bullet.setSpeedHeading(Bullet.speed,heading)
+		bullet.setAllegiance = allegiance;
 		gameobjects.layer["Projectiles"].push(bullet);
 	}
 	function process(){
+		see();
+		identify();
+		reflex();
+		if(!panic){
+			think();
+		}
+		heading+=headingAccel;
 		position.translate(physicalAttribute.getSpeed().x,physicalAttribute.getSpeed().y)
 	}
 	var public = {};
@@ -189,6 +353,9 @@ function Cop(){
 		}
 		public.getY = function(){
 			return position.getY();
+		}
+		public.getPosition=function(){
+			return position;
 		}
 		public.getPhysicalAttribute = function(){
 			return physicalAttribute
@@ -238,6 +405,15 @@ function Cop(){
 		}
 		public.setActiveCamera = function(nActiveCamera){
 			activeCamera = nActiveCamera;
+		}
+		public.setAllegiance = function(alleg){
+			allegiance = alleg
+		}
+		public.getAllegiance = function(){
+			return allegiance;
+		}
+		public.setSelf = function(a){
+			self = a
 		}
 		public.draw = function(){
 			draw()
@@ -290,7 +466,7 @@ function BangunanTes(){
 			vert = 1
 		}
 		
-		obj.setPosition(obj.getX()+horz,obj.getY()+vert);
+		obj.getPosition().translate(horz,vert);
 		
 	}
 	function draw(){
@@ -299,6 +475,25 @@ function BangunanTes(){
 		ctx.beginPath();
 		ctx.rect(0,0,width*unit,height*unit);
 		ctx.fill();
+		
+		ctx.globalCompositeOperation = "exclusion";
+        ctx.fillStyle="white";
+        ctx.strokeStyle="black";
+        ctx.textAlign="center";
+        ctx.font = "bold small-caps 50px Goudy Old Style";
+		//ATAS
+		ctx.translate(width/2*unit,0);
+		ctx.beginPath();
+        ctx.textBaseline="top";
+        ctx.fillText(name,0,0);
+        ctx.strokeText(name,0,0);
+        
+        //BAWAH
+        ctx.translate(0,height*unit);
+		ctx.beginPath();
+        ctx.textBaseline="bottom";
+        ctx.fillText(name,0,0);
+        ctx.strokeText(name,0,0);
 	}
 	var public = {};
 		public.getWidth = function(){
@@ -340,162 +535,6 @@ function BangunanTes(){
 	return public;
 }
 
-function BangunanBar(){
-	var name = "BangunanBar"
-	var position = new Position(0,0);
-	var width = 4;
-	var height = 1;
-	var collisionModel;
-	var unit = 100;
-	
-	function affectDynamicCollision(obj){
-		var kanan = false,
-			kiri = false,
-			atas = false,
-			bawah = false;
-		var horz = 0,
-			vert = 0;
-		if(obj.getX()<position.getX()){
-			kiri = true;
-		}
-		if(obj.getX()>position.getX()+width*unit){
-			kanan = true;
-		}
-		if(obj.getY()<position.getY()){
-			atas = true;
-		}
-		if(obj.getY()>position.getY()+height*unit){
-			bawah = true;
-		}
-		
-		if(kiri){
-			horz = -1
-		}
-		else if(kanan){
-			horz = 1
-		}
-		if(atas){
-			vert = -1
-		}
-		else if(bawah){
-			vert = 1
-		}
-		
-		obj.setPosition(obj.getX()+horz,obj.getY()+vert);
-		
-	}
-	
-	function draw(){
-		ctx.translate(position.getX(),position.getY())
-		ctx.fillStyle="rgb(180,180,180)"
-		ctx.beginPath();
-		ctx.rect(0,0,width*unit,height*unit);
-		ctx.fill();
-		ctx.fillStyle="red"
-		ctx.beginPath();
-		ctx.rect(unit/8,unit/8,width*unit-unit/8*2,height*unit-unit/8*2);
-		ctx.fill();
-	}
-	var public = {};
-		public.getWidth = function(){
-			return width;
-		}
-		public.getHeight = function(){
-			return height;
-		}
-		public.setUnit = function(newUnit){
-			unit = newUnit
-		}
-		public.setName = function(newName){
-			name = newName
-		}
-		public.getX = function(){
-			return position.getX()
-		}
-		public.getY = function(){
-			return position.getY()
-		}
-		public.setPosition = function(x,y){
-			position = new Position(x,y);
-		}
-		public.setCollisionModel = function(Collisionmodel){
-			collisionModel = Collisionmodel;
-		}
-		public.getCollisionModel = function(){
-			return collisionModel;
-		}
-		public.draw = function(){
-			draw();
-		}
-		public.affectDynamicCollision = function(obj){
-			affectDynamicCollision(obj)
-		}
-		public.process = function(){
-			
-		}
-	return public;
-}
-
-function Bullet(x,y){
-	var position = new Position(x,y);
-	var sourcePosition = new Position(x,y)
-	var physicalAttribute = new PhysicalAttribute();
-		physicalAttribute.setWeight(10);
-	var size = 3;
-	var collisionModel = new CollisionModel(CollisionType.GRABBABLE);
-		collisionModel.buildCircleModel(size);
-	var isTrash = false;
-	
-	function setSpeedHeading(speed,heading){
-		var vx = speed*Math.cos(heading);
-		var vy = speed*Math.sin(heading);
-		physicalAttribute.setSpeed(vx,vy);
-	}
-	function draw(){
-		ctx.fillStyle = "white";
-		ctx.strokeStyle = "black";
-		ctx.translate(position.getX(),position.getY());
-		ctx.beginPath();
-		ctx.arc(0,0,size,0,2*Math.PI,false);
-		ctx.fill();
-		ctx.stroke();
-	}
-	function process(){
-		position.translate(physicalAttribute.getSpeed().x,physicalAttribute.getSpeed().y)
-		
-		if(isTrash){
-			throw "isTrash";
-		}
-		if(KleyMath.distanceFromPointToPoint(position,sourcePosition)>Bullet.distanceLimit){
-			throw "isTrash";
-		}
-	}
-	var public = {}
-		public.getX = function(){
-			return position.getX();
-		}
-		public.getY = function(){
-			return position.getY();
-		}
-		public.setSpeedHeading = function(speed,heading){
-			setSpeedHeading(speed,heading);			
-		}
-		public.getCollisionModel = function(){
-			return collisionModel;
-		}
-		public.affectStaticCollision = function(obj){
-			isTrash = true;
-		}
-		public.draw = function(){
-			draw();
-		}
-		public.process = function(){
-			process();
-		}
-	return public;
-}
-Bullet.distanceLimit = 400;
-Bullet.speed = 30;
 
 //OBJECT COMMANDS
 function createPlayerCharacter(name,x,y,heading,input){
@@ -564,6 +603,7 @@ function createCop(name,x,y,heading){
 		cop.setName(name)
 		cop.setPosition(x,y);
 		cop.setHeading(0)
+		cop.setSelf(cop);
 	return cop;
 }
 
@@ -578,6 +618,33 @@ function buildingSpawner(buildingObject,position,mapgrid){
 		0,
 		0)
 	mapgrid.occupy(position.getX(),position.getY(),buildingObject.getWidth(),buildingObject.getHeight(),2)
-	console.log(position.getY())
 	return buildingObject
+}
+
+function domeSpawner(towerObject,position,mapgrid){
+	var edgePosition = mapgrid.getEdgePosition(position.getX(),position.getY())
+	towerObject.setPosition(edgePosition.getX(),edgePosition.getY());
+	towerObject.setUnit(mapgrid.getUnit())
+	towerObject.setCollisionModel(new CollisionModel(CollisionType.STATIC));
+	towerObject.getCollisionModel().buildCircleModel(towerObject.getRadius()*mapgrid.getUnit(),0,0)
+	mapgrid.occupy(position.getX()-towerObject.getRadius(),position.getY()-towerObject.getRadius(),2*towerObject.getRadius(),2*towerObject.getRadius(),2)
+	return towerObject
+}
+
+function rectangleSteppableSpawner(buildingObject,position,mapgrid){
+	var edgePosition = mapgrid.getEdgePosition(position.getX(),position.getY())
+	buildingObject.setPosition(edgePosition.getX(),edgePosition.getY());
+	buildingObject.setUnit(mapgrid.getUnit())
+	buildingObject.setCollisionModel(new CollisionModel(CollisionType.NONE));
+	mapgrid.occupy(position.getX(),position.getY(),buildingObject.getWidth(),buildingObject.getHeight(),2)
+	return buildingObject
+}
+
+function circleSteppableSpawner(towerObject,position,mapgrid){
+	var edgePosition = mapgrid.getEdgePosition(position.getX(),position.getY())
+	towerObject.setPosition(edgePosition.getX(),edgePosition.getY());
+	towerObject.setUnit(mapgrid.getUnit())
+	towerObject.setCollisionModel(new CollisionModel(CollisionType.NONE));
+	mapgrid.occupy(position.getX()-towerObject.getRadius(),position.getY()-towerObject.getRadius(),2*towerObject.getRadius(),2*towerObject.getRadius(),2)
+	return towerObject
 }
