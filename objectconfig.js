@@ -1,3 +1,10 @@
+var Allegiance = {
+	PLAYER : 1,
+	ENEMY : 2,
+	FRIENDLY :3,
+	HOSTAGE : 4
+}
+
 function Position(x,y){
 	var public = {};
 		public.getX = function(){

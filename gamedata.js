@@ -2,6 +2,7 @@ function Gamedata(gameobjects,input,activeCamera){
 	
 	gameobjects.mapgrid.setUnit(100)
 	gameobjects.mapgrid.isToBeDrawn = false;                   //DEBUG: menyalakan mapgrid pada graphic
+	gameobjects.addTopLayer("Steppable");
 	gameobjects.addTopLayer("PlayerChar");               //DEBUG: menyalakan mapgrid pada graphic
 	gameobjects.addTopLayer("Mafia");
 	gameobjects.addTopLayer("Hostage");
@@ -17,13 +18,13 @@ function Gamedata(gameobjects,input,activeCamera){
 		);
 	
 	//PLAYER CHARACTER
-    var playerChar = createPlayerCharacter("PlayerCharacter",(24-15)*100,(19-15)*100,0,input);
+    var playerChar = createPlayerCharacter("PlayerCharacter",900,400,0,input);
 	playerChar.setInput(input,activeCamera);
 	gameobjects.layer["PlayerChar"].push(playerChar)
 	
 	
 	//COP TEST
-	var copTes = createCop("cop",(16-15)*100,(13-15)*100,0);
+	var copTes = createCop("cop",800,350,0);
 	gameobjects.layer["Cops"].push(copTes);
 	
 	activeCamera.bindToObject(playerChar);
@@ -71,7 +72,7 @@ function Gamedata(gameobjects,input,activeCamera){
 	gameobjects.layer["Buildings"].push(buildingSpawner(new UKDW(),Point(5,31),gameobjects.mapgrid))
     
 	gameobjects.layer["Buildings"].push(buildingSpawner(new Tower(),Point(29,21),gameobjects.mapgrid))
-	gameobjects.layer["Buildings"].push(domeSpawner(new Park(),Point(30,22),gameobjects.mapgrid))
+	gameobjects.layer["Steppable"].push(circleSteppableSpawner(new Park(),Point(30,22),gameobjects.mapgrid))
     
     //hidden building
 	gameobjects.layer["Buildings"].push(buildingSpawner(new hidden1(),Point(0,0),gameobjects.mapgrid))
@@ -81,8 +82,8 @@ function Gamedata(gameobjects,input,activeCamera){
     
 	
 	function process(){
-		//var a = gameobjects.mapgrid.coordBelongsToCell(playerChar.getX(),playerChar.getY());
-		//console.log(a.getX()+":"+a.getY());
+		var a = gameobjects.mapgrid.coordBelongsToCell(playerChar.getX(),playerChar.getY());
+		console.log(a.getX()+":"+a.getY());
 	}
 	function processAfterGraphic(){
 		//Isi process di sini hanya yang perlu dilakukan setelah objects di draw per frame

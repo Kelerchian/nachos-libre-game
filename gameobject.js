@@ -1,13 +1,12 @@
 //OBJECTS
-var Allegiance = {
-	PLAYER : 1,
-	ENEMY : 2,
-	FRIENDLY :3,
-	HOSTAGE : 4
-}
 
 function PlayerCharacter(){
 	var allegiance = Allegiance.PLAYER;
+	var stats = {}
+		stats.health = 1000
+	var damaged = {}
+		damaged.color = null;
+		damaged.countDown = 0
 	var name = "PlayerCharacter";
 	var position = new Position(0,0);
 	var heading = 0;
@@ -21,8 +20,22 @@ function PlayerCharacter(){
 	var input = null;
 	var activeCamera = null;
 	var guntrigger = false;
+	function attacked(num){
+		stats.health-=num;
+		damaged.color = "red"
+		damaged.countDown = 3
+	}
 	function draw(){
-		ctx.fillStyle = color;
+		if(damaged.color!=null){
+			ctx.fillStyle = damaged.color;
+			damaged.countDown -= 1
+			if(damaged.countDown == 0){
+				damaged.color = null;
+			}
+		}
+		else{
+			ctx.fillStyle = color;
+		}
 		ctx.strokeStyle = "black";
 		ctx.translate(position.getX(),position.getY());
 		ctx.rotate(heading);
@@ -40,7 +53,7 @@ function PlayerCharacter(){
 		ctx.stroke();
 	}
 	function shoot(){
-		var bullet = new Bullet(position.getX(),position.getY());
+		var bullet = new Bullet(position.getX(),position.getY(),allegiance);
 		bullet.setSpeedHeading(Bullet.speed,heading)
 		bullet.setAllegiance = allegiance;
 		gameobjects.layer["Projectiles"].push(bullet);
@@ -119,6 +132,9 @@ function PlayerCharacter(){
 		public.stopX = function(){
 			physicalAttribute.toZeroSpeedX();
 		}
+		public.attacked = function(num){
+			attacked(num);
+		}
 		public.stopY = function(){
 			physicalAttribute.toZeroSpeedY();
 		}
@@ -156,12 +172,18 @@ function PlayerCharacter(){
 
 function Cop(){
 	var self = null;
+	var stats = {}
+		stats.health = 100
+	var damaged = {}
+		damaged.color = null;
+		damaged.countDown = 0
+	var accessories = {}
+		accessories.sirenCounter = 0;
 	var allegiance = Allegiance.ENEMY;
 	var name = "cop";
 	var position = new Position(0,0);
 	var heading = 0;
 	var headingAccel = 0;
-	var headingAccelLimit = Math.PI/5;
 	var size = 25;
 	var searchLightSize = 200;
 	var collisionModel = new CollisionModel(CollisionType.DYNAMIC);
@@ -170,7 +192,7 @@ function Cop(){
 	var physicalAttribute = new PhysicalAttribute();
 	var accelerationForce = 30
 	var activeCamera = null;
-	var guntrigger = false;
+	var gunCountDown = 0;
 	var alert = false;
 	var knownEnemies = [];
 	var knownThreats = [];
@@ -179,7 +201,13 @@ function Cop(){
 	var seenMafia = [];
 	var panic = 0;
 	var nearbyCops = 0;
-	
+	var offensive = 0
+	var gunheading = 0
+	function attacked(num){
+		stats.health-=num
+		damaged.color = "red";
+		damaged.countDown = 10;
+	}
 	function isInKnownEnemies(obj){
 		for(var i = 0; i<knownEnemies.length; i++){
 			if(obj == knownEnemies[i]){
@@ -197,7 +225,16 @@ function Cop(){
 		return false;
 	}
 	function draw(){
-		ctx.fillStyle = color;
+		if(damaged.color!=null){
+			ctx.fillStyle = damaged.color
+			damaged.countDown -= 1
+			if(damaged.countDown == 0){
+				damaged.color = null
+			}
+		}
+		else{
+			ctx.fillStyle = color;
+		}
 		ctx.strokeStyle = "black";
 		ctx.translate(position.getX(),position.getY());
 		ctx.rotate(heading);
@@ -205,6 +242,34 @@ function Cop(){
 		ctx.arc(0,0,size,0,2*Math.PI,false);
 		ctx.fill();
 		ctx.stroke();
+		if(alert){
+			accessories.sirenCounter += 20;
+			if(accessories.sirenCounter > 99){
+				accessories.sirenCounter = -100
+			}
+			ctx.fillStyle = "blue"
+			ctx.beginPath()
+			ctx.moveTo(0,0)
+			ctx.lineTo(10,0)
+			ctx.lineTo(10,-30)
+			ctx.lineTo(-10,-30)
+			ctx.lineTo(-10,0)
+			ctx.closePath();
+			ctx.globalAlpha = Math.abs(accessories.sirenCounter)/100
+			ctx.fill()
+			
+			ctx.fillStyle = "red"
+			ctx.beginPath()
+			ctx.moveTo(0,0)
+			ctx.lineTo(10,0)
+			ctx.lineTo(10,30)
+			ctx.lineTo(-10,30)
+			ctx.lineTo(-10,0)
+			ctx.closePath();
+			ctx.globalAlpha = (100-Math.abs(accessories.sirenCounter))/100
+			ctx.fill()
+			ctx.globalAlpha = 1
+		}
 		ctx.beginPath();
 		ctx.arc(0,0,searchLightSize,-Math.PI/4,Math.PI/4,false)
 		ctx.fillStyle="rgba(127,127,127,0.5)"
@@ -315,6 +380,8 @@ function Cop(){
 			}
 			headingDest = KleyMath.limitMod(headingDest,heading-Math.PI,heading+Math.PI);
 			headingControl+=headingDest-heading;
+			gunheading = heading + headingControl
+			offensive = true
 		}
 		else{
 			idle = true
@@ -332,17 +399,30 @@ function Cop(){
 		}
 	}
 	function shoot(){
-		var bullet = new Bullet(position.getX(),position.getY());
-		bullet.setSpeedHeading(Bullet.speed,heading)
-		bullet.setAllegiance = allegiance;
-		gameobjects.layer["Projectiles"].push(bullet);
+		if(gunCountDown==0){
+			gunCountDown == new Date().getTime() - 200
+		}
+		if(gunCountDown<new Date().getTime() - 200){
+			var bullet = new Bullet(position.getX(),position.getY(),allegiance);
+			bullet.setSpeedHeading(Bullet.speed,gunheading+(Math.random()*Math.PI/8-Math.PI/16))
+			bullet.setAllegiance = allegiance;
+			gameobjects.layer["Projectiles"].push(bullet);
+			gunCountDown = new Date().getTime() + Math.random()*600;
+		}
 	}
 	function process(){
+		if(stats.health<1){
+			throw "isTrash"
+		}
+		offensive = false
 		see();
 		identify();
 		reflex();
 		if(!panic){
 			think();
+		}
+		if(offensive){
+			shoot()
 		}
 		heading+=headingAccel;
 		position.translate(physicalAttribute.getSpeed().x,physicalAttribute.getSpeed().y)
@@ -414,6 +494,9 @@ function Cop(){
 		}
 		public.setSelf = function(a){
 			self = a
+		}
+		public.attacked = function(num){
+			attacked(num)
 		}
 		public.draw = function(){
 			draw()

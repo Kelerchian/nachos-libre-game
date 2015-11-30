@@ -1,5 +1,4 @@
-function Bullet(x,y){
-	var allegiance = null;
+function Bullet(x,y,allegiance){
 	var position = new Position(x,y);
 	var sourcePosition = new Position(x,y)
 	var physicalAttribute = new PhysicalAttribute();
@@ -8,6 +7,19 @@ function Bullet(x,y){
 	var collisionModel = new CollisionModel(CollisionType.GRABBABLE);
 		collisionModel.buildCircleModel(size);
 	var isTrash = false;
+	
+	function affectDynamicCollision(obj){
+		if(allegiance!=Allegiance.ENEMY){
+			if(obj.getAllegiance()==Allegiance.ENEMY){
+				obj.attacked(10);
+			}
+		}
+		else{
+			if(obj.getAllegiance()!=Allegiance.ENEMY){
+				obj.attacked(10);
+			}
+		}
+	}
 	
 	function setSpeedHeading(speed,heading){
 		var vx = speed*Math.cos(heading);
@@ -47,6 +59,10 @@ function Bullet(x,y){
 			return collisionModel;
 		}
 		public.affectStaticCollision = function(obj){
+			isTrash = true;
+		}
+		public.affectDynamicCollision = function(obj){
+			affectDynamicCollision(obj);
 			isTrash = true;
 		}
 		public.setAllegiance = function(alleg){
