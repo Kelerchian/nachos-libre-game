@@ -40,7 +40,10 @@ var Physics = {}
 		var coltype1 = obj1.getCollisionModel().getCollisionType();
 		var coltype2 = obj2.getCollisionModel().getCollisionType();
 		var position;
-		if(modtype1 == CollisionType.NONE || modtype2 == CollisionType.NONE){
+		if(coltype1 == CollisionType.NONE || coltype2 == CollisionType.NONE){
+			return
+		}
+		if(coltype1 == CollisionType.STATIC && coltype2 == CollisionType.STATIC){
 			return
 		}
 		function getColPosSquareSquare(square1, square2) {
@@ -280,21 +283,125 @@ var Physics = {}
 		if(outofbound == true){
 			return false;
 		}
-		/*
-		if (circle.getX() - circle.getR() > right) {
-			return false
-		}
-		if (circle.getX() + circle.getR() < left) {
-			return false
-		}
-		if (circle.getY() + circle.getR() < top) {
-			return false;
-		}
-		if (circle.getY() - circle.getR() > bottom) {
-			return false;
-		}
-		*/
 		return Physics.isCollideLineCircle(limitedline, circle)
+	}
+	Physics.collideLine = function(line,obj){
+		if(obj.getCollisionModel().getModel().type == CollisionModelType.CIRCLE){
+			return lineAndCircle(line,obj)
+		}
+		else if(obj.getCollisionModel().getModel().type == CollisionModelType.SQUARE){
+			return lineAndSquare(line,obj)
+		}
+		return false;
+		function lineAndSquare(line,square){
+			var xs = square.getX() + square.getCollisionModel().getModel().x;
+			var ys = square.getY() + square.getCollisionModel().getModel().y;
+			var ws = square.getCollisionModel().getModel().w;
+			var hs = square.getCollisionModel().getModel().h;
+			
+			//console.log("xs: "+xs+" ws: "+ws,"ys: "+ys,"hs: "+hs) 
+			var px = []
+			var py = []
+			
+			pt = lineAndLine(line,new LineFunc(Point(xs,ys), Point(xs+ws,ys)))
+			if(pt!=false){
+				px.push(pt.getX())
+				py.push(pt.getY())
+			}
+			pt = lineAndLine(line,new LineFunc(Point(xs+ws,ys), Point(xs+ws,ys+hs)))
+			if(pt!=false){
+				/*
+				console.log("line1: ",
+				line.getPtA().getX()+":"+line.getPtA().getY(),
+				"=>",
+				line.getPtB().getX()+":"+line.getPtB().getY()
+				)
+				
+				console.log("line2: ",
+				xs+ws+":"+ys,
+				"=>",
+				xs+ws+":"+ys+hs
+				)
+				Game.stop()*/
+				
+				px.push(pt.getX())
+				py.push(pt.getY())
+			}
+			pt = lineAndLine(line,new LineFunc(Point(xs+ws,ys+hs), Point(xs,ys+hs)))
+			if(pt!=false){
+				px.push(pt.getX())
+				py.push(pt.getY())
+			}
+			pt = lineAndLine(line,new LineFunc(Point(xs,ys+hs), Point(xs,ys)))
+			if(pt!=false){
+				px.push(pt.getX())
+				py.push(pt.getY())
+			}
+			if(px.length==0){
+				return false;
+			}
+			var x=0,
+				y=0
+			for(var i = 0; i<px.length; i++){
+				x+=px[i]
+			}
+			for(var i = 0; i<py.length; i++){
+				y+=py[i]
+			}
+			x=x/px.length
+			y=y/py.length
+			return Point(x,y);
+		}
+		function lineAndCircle(line,circle){
+				var xc = circle.getX() + circle.getCollisionModel().getModel().xOffset;
+				var yc = circle.getY() + circle.getCollisionModel().getModel().yOffset;
+				var radius = circle.getCollisionModel().getModel().radius
+				var foundPoint;
+			if(line.getType() == LineFuncMType.HORIZONTAL){
+				var distance = yc-line.getPtA().getY();
+				if(distance<0){
+					distance = distance * -1;
+				}
+				if(distance<radius){
+					foundPoint = Point(xc,line.getPtA().getY());
+				}
+				else{
+					return false;
+				}
+			}
+			else if(line.getType() == LineFuncMType.VERTICAL){
+				var distance = xc-line.getPtA().getX();
+				if(distance<0){
+					distance = distance * -1;
+				}
+				if(distance<radius){
+					foundPoint =  Point(line.getPtA().getX(),yc);
+				}
+				else{
+					return false;
+				}
+			}
+			else{
+				var oppositeLine_m = -1/line.getM()
+				var oppositeLine_trueC = yc/oppositeLine_m/xc
+				var oppositePtA = Point(line.getPtA.getX(),line.getPtA.getX()*oppositeLine_m + oppositeLine_trueC);
+				var oppositePtB = Point((line.getPtA.getY()-oppositeLine_trueC)/oppositeLine_m,line.getPtA.getY());
+				var oppositeLine = new LineFunc(oppositePtA,oppositePtB);
+				foundPoint = lineAndLine(line,oppositeLine);
+				if(foundPoint==false){
+					return false;
+				}
+				var distance = Math.sqrt((foundPoint.getX()-xc)*(foundPoint.getX()-xc)+(foundPoint.getY()-yc)*(foundPoint.getY()-yc))
+				if(distance>radius){
+					return false
+				}
+			}
+			if(KleyMath.between(line.getPtA().getX(),foundPoint.getX(),line.getPtB().getX()) &&
+			 KleyMath.between(line.getPtA().getY(),foundPoint.getY(),line.getPtB().getY())){
+				return foundPoint
+			}
+			return false;
+		}
 	}	
 
 
@@ -361,9 +468,21 @@ function LineFunc(ptA, ptB) {
 		return c;
 	}
 	public.getM = function(){
+		if(type==LineFuncMType.VERTICAL){
+			return 0;
+		}
+		if(type==LineFuncMType.HORIZONTAL){
+			return Infinity;
+		}
 		return a/b
 	}
 	public.getTrueC = function(){
+		if(type == LineFuncMType.HORIZONTAL){
+			return ptA.getY();
+		}
+		if(type == LineFuncMType.VERTICAL){
+			return 0;
+		}
 		return c/b
 	}
 	public.getPtA = function () {
@@ -390,10 +509,11 @@ function LineFunc(ptA, ptB) {
 	return public;
 }
 
+
 function lineAndLine(line1,line2){
 	//FUNCTION
 	function horizontalAndHorizontal(line1,line2){
-		if(line1.getPtA().getY()==line2.getPtA.getY()){
+		if(line1.getPtA().getY()==line2.getPtA().getY()){
 			if(KleyMath.between(line2.getPtA().getX() , line1.getPtA().getX() , line2.getPtB().getX()) ||
 			KleyMath.between(line2.getPtA().getX() , line1.getPtB().getX() , line2.getPtB().getX()) || 
 			KleyMath.between(line1.getPtA().getX() , line2.getPtA().getX() , line1.getPtB().getX()) ||
@@ -445,14 +565,18 @@ function lineAndLine(line1,line2){
 	}
 	function normalAndHorizontal(line1,line2){
 		var returnPt = line1.getPointIfY(line2.getPtA().getY())
-		if(KleyMath.between(line1.getPtA().getX(),returnPt.getX(),line1.getPtB().getX())){
+		if(KleyMath.between(line1.getPtA().getX(),returnPt.getX(),line1.getPtB().getX()) && 
+		KleyMath.between(line1.getPtA().getY(),returnPt.getY(),line1.getPtB().getY())
+		){
 			return returnPt
 		}
 		return false
 	}
 	function normalAndVertical(line1,line2){
 		var returnPt = line1.getPointIfX(line2.getPtA().getX())
-		if(KleyMath.between(line1.getPtA().getY(),returnPt.getY(),line1.getPtB().getY())){
+		if(KleyMath.between(line1.getPtA().getY(),returnPt.getY(),line1.getPtB().getY()) && 
+		KleyMath.between(line1.getPtA().getX(),returnPt.getX(),line1.getPtB().getX()) 
+		){
 			return returnPt
 		}
 		return false
@@ -483,18 +607,19 @@ function lineAndLine(line1,line2){
 		}
 	}
 	else if(line1.getType() == LineFuncMType.NORMAL){
-		
 		if(line2.getType() == LineFuncMType.HORIZONTAL){
+		console.log(1)
 			return normalAndHorizontal(line1,line2)
 		}
 		else if(line2.getType() == LineFuncMType.VERTICAL){
+		console.log(2)
 			return normalAndVertical(line1,line2)
 		}
 		else if(line2.getType() == LineFuncMType.NORMAL){
+		console.log(3)
 			return normalAndNormal(line1,line2)
 		}
 	}
-	console.log("bablas")
 	return false;
 }
 

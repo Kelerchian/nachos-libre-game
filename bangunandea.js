@@ -110,8 +110,8 @@ function GraveYard(){
 	return public;
 }
 
-function Building1(){
-	var name = "Building1"
+function Hiro(){
+	var name = "Hiro's House"
 	var position = new Position(0,0);
 	var width = 6;
 	var height = 5;
@@ -222,8 +222,8 @@ function Building1(){
 	return public;
 }
 
-function Building2(){
-	var name = "Building2"
+function Burjo(){
+	var name = "Burjo"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -558,8 +558,8 @@ function Market(){
 	return public;
 }
 
-function Building3(){
-	var name = "Building3"
+function VillaCrepes(){
+	var name = "Villa Crepes"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -670,8 +670,8 @@ function Building3(){
 	return public;
 }
 
-function Building4(){
-	var name = "Building4"
+function InternetCafe(){
+	var name = "Internet Cafe"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -894,8 +894,8 @@ function BookStore(){
 	return public;
 }
 
-function Building5(){
-	var name = "Building5"
+function McDonald(){
+	var name = "Mc Donald"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -1006,8 +1006,8 @@ function Building5(){
 	return public;
 }
 
-function Building6(){
-	var name = "Building6"
+function SerabiNotosuman(){
+	var name = "Serabi Notosuman"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -1118,8 +1118,8 @@ function Building6(){
 	return public;
 }
 
-function Building7(){
-	var name = "Building7"
+function Dea(){
+	var name = "Dea's House"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -1230,8 +1230,8 @@ function Building7(){
 	return public;
 }
 
-function Building8(){
-	var name = "Building8"
+function GameCenter(){
+	var name = "Game Center"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -1342,8 +1342,8 @@ function Building8(){
 	return public;
 }
 
-function Building9(){
-	var name = "Building9"
+function UluBundar(){
+	var name = "Ulu Bundar"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 6;
@@ -1454,8 +1454,8 @@ function Building9(){
 	return public;
 }
 
-function Building10(){
-	var name = "Building10"
+function Alan(){
+	var name = "Alan's House"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 6;
@@ -1569,7 +1569,7 @@ function Building10(){
 function Amplaz(){
 	var name = "Ambarukmo Plaza"
 	var position = new Position(0,0);
-	var width = 10;
+	var width = 28;
 	var height = 10;
 	var collisionModel;
 	var unit = 100;
@@ -1678,8 +1678,8 @@ function Amplaz(){
 	return public;
 }
 
-function Building11(){
-	var name = "Building11"
+function Gawak(){
+	var name = "Gawak's House"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 6;
@@ -1902,8 +1902,8 @@ function JogjaPlazaHotel(){
 	return public;
 }
 
-function Building12(){
-	var name = "Building12"
+function SwimmingPool(){
+	var name = "Jogja Swimming Pool"
 	var position = new Position(0,0);
 	var width = 7;
 	var height = 5;
@@ -2238,8 +2238,8 @@ function DrugStore(){
 	return public;
 }
 
-function Building13(){
-	var name = "Building13"
+function KFC(){
+	var name = "KFC"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -2574,8 +2574,8 @@ function Minimarket(){
 	return public;
 }
 
-function Building14(){
-	var name = "Building14"
+function Yuga(){
+	var name = "Yuga's House"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -2798,8 +2798,8 @@ function TraditionalMarket(){
 	return public;
 }
 
-function Building15(){
-	var name = "Building15"
+function Bank(){
+	var name = "Bank"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -2910,8 +2910,8 @@ function Building15(){
 	return public;
 }
 
-function Building16(){
-	var name = "Building16"
+function Luxury(){
+	var name = "Luxury Cafe"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -3134,8 +3134,8 @@ function Cinema(){
 	return public;
 }
 
-function Building17(){
-	var name = "Building17"
+function Mahas(){
+	var name = "Mr. Mahas's House"
 	var position = new Position(0,0);
 	var width = 8;
 	var height = 5;
@@ -3246,8 +3246,8 @@ function Building17(){
 	return public;
 }
 
-function Building18(){
-	var name = "Building18"
+function Enath(){
+	var name = "Enath Computer"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -3358,8 +3358,8 @@ function Building18(){
 	return public;
 }
 
-function Building19(){
-	var name = "Building19"
+function Cendana(){
+	var name = "Cendana Restaurant"
 	var position = new Position(0,0);
 	var width = 5;
 	var height = 5;
@@ -3806,8 +3806,8 @@ function SafeHouse(){
 	return public;
 }
 
-function UKDW(){
-	var name = "Duta Wacana Christian University"
+function PizzaHut(){
+	var name = "Pizza Hut"
 	var position = new Position(0,0);
 	var width = 8;
 	var height = 8;
@@ -3918,8 +3918,120 @@ function UKDW(){
 	return public;
 }
 
-function Tower(){
-	var name = "Tower"
+function TamanPelangi(){
+	var name = "Taman Pelangi"
+	var position = new Position(0,0);
+	var width = 17;
+	var height = 9;
+	var collisionModel;
+	var unit = 100;
+	
+	
+	function affectDynamicCollision(obj){
+		var kanan = false,
+			kiri = false,
+			atas = false,
+			bawah = false;
+		var horz = 0,
+			vert = 0;
+		if(obj.getX()<position.getX()){
+			kiri = true;
+		}
+		if(obj.getX()>position.getX()+width*unit){
+			kanan = true;
+		}
+		if(obj.getY()<position.getY()){
+			atas = true;
+		}
+		if(obj.getY()>position.getY()+height*unit){
+			bawah = true;
+		}
+		
+		if(kiri){
+			horz = -1
+		}
+		else if(kanan){
+			horz = 1
+		}
+		if(atas){
+			vert = -1
+		}
+		else if(bawah){
+			vert = 1
+		}
+		
+		obj.getPosition().translate(horz,vert);
+		
+	}
+	function draw(){
+		ctx.translate(position.getX(),position.getY());
+		ctx.fillStyle="rgb(150,150,190)";
+		ctx.beginPath();
+		ctx.rect(0,0,width*unit,height*unit);
+		ctx.fill();
+        
+        //building label 
+        ctx.globalCompositeOperation = "exclusion";
+        ctx.fillStyle="white";
+        ctx.strokeStyle="black";
+        ctx.textAlign="center";
+        ctx.font = "bold small-caps 50px Goudy Old Style";
+		//ATAS
+		ctx.translate(width/2*unit,0);
+		ctx.beginPath();
+        ctx.textBaseline="top";
+        ctx.fillText(name,0,0);
+        ctx.strokeText(name,0,0);
+        
+        //BAWAH
+        ctx.translate(0,height*unit);
+		ctx.beginPath();
+        ctx.textBaseline="bottom";
+        ctx.fillText(name,0,0);
+        ctx.strokeText(name,0,0);
+	}
+	var public = {};
+		public.getWidth = function(){
+			return width;
+		}
+		public.getHeight = function(){
+			return height;
+		}
+		public.getX = function(){
+			return position.getX()
+		}
+		public.getY = function(){
+			return position.getY()
+		}
+		public.setUnit = function(newUnit){
+			unit = newUnit
+		}
+		public.setName = function(newName){
+			name = newName
+		}
+		public.setPosition = function(x,y){
+			position = new Position(x,y);
+		}	
+		public.setCollisionModel = function(Collisionmodel){
+			collisionModel = Collisionmodel;
+		}
+		public.getCollisionModel = function(){
+			return collisionModel;
+		}
+		public.affectDynamicCollision = function(obj){
+			affectDynamicCollision(obj)
+		}
+		public.draw = function(){
+			draw();
+		}
+		public.process = function(){
+			
+		}
+	return public;
+}
+
+function Tugu(){
+	var name = "Tugu"
 	var position = new Position(0,0);
 	var width = 2;
 	var height = 2;
@@ -4035,7 +4147,7 @@ function Park(){
 	var position = new Position(0,0);
 	var collisionModel;
 	var unit = 100;
-    var radius = 2;
+    var radius = 4;
 	
 	
 	function affectDynamicCollision(obj){
@@ -4059,11 +4171,11 @@ function Park(){
 	
 	function draw(){
 		ctx.translate(position.getX(),position.getY());
-		ctx.strokeStyle="rgb(70,190,70)";
+		ctx.fillStyle="rgb(70,190,70)";
 		ctx.beginPath();
 		ctx.arc(0,0,radius*unit,0,Math.PI*2,false)
 		ctx.lineWidth=9;
-		ctx.stroke();
+		ctx.fill();
         
         //building label 
         ctx.globalCompositeOperation = "difference";
@@ -4128,13 +4240,17 @@ function hidden1(){
 	var name = "hidden1"
 	var position = new Position(0,0);
 	var width = 1;
-	var height = 44;
+	var height = 77;
 	var collisionModel;
 	var unit = 100;
 	
 	
 	function draw(){
-		
+        ctx.translate(position.getX(),position.getY());
+		ctx.fillStyle="black";
+		ctx.beginPath();
+		ctx.rect(0,0,width*unit,height*unit);
+		ctx.fill();
 	}
 	function affectDynamicCollision(obj){
 		var kanan = false,
@@ -4216,13 +4332,17 @@ function hidden1(){
 function hidden2(){
 	var name = "hidden2"
 	var position = new Position(0,0);
-	var width = 60;
+	var width = 74;
 	var height = 1;
 	var collisionModel;
 	var unit = 100;
 	
 	function draw(){
-		
+        ctx.translate(position.getX(),position.getY());
+		ctx.fillStyle="black";
+		ctx.beginPath();
+		ctx.rect(0,0,width*unit,height*unit);
+		ctx.fill();
 	}
 	
 	function affectDynamicCollision(obj){
@@ -4306,13 +4426,17 @@ function hidden3(){
 	var name = "hidden3"
 	var position = new Position(0,0);
 	var width = 1;
-	var height = 43;
+	var height = 76;
 	var collisionModel;
 	var unit = 100;
 	
 	
 	function draw(){
-		
+        ctx.translate(position.getX(),position.getY());
+		ctx.fillStyle="black";
+		ctx.beginPath();
+		ctx.rect(0,0,width*unit,height*unit);
+		ctx.fill();
 	}
 	function affectDynamicCollision(obj){
 		var kanan = false,
@@ -4394,13 +4518,17 @@ function hidden3(){
 function hidden4(){
 	var name = "hidden4"
 	var position = new Position(0,0);
-	var width = 59;
+	var width = 73;
 	var height = 1;
 	var collisionModel;
 	var unit = 100;
 	
 	function draw(){
-		
+        ctx.translate(position.getX(),position.getY());
+		ctx.fillStyle="black";
+		ctx.beginPath();
+		ctx.rect(0,0,width*unit,height*unit);
+		ctx.fill();
 	}
 	
 	function affectDynamicCollision(obj){

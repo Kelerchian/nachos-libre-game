@@ -91,7 +91,7 @@ function Game(canvasid) {
         }
         gameobjects.mapgrid = new MapGrid();                            //mapgrid -> lihat mapgrid.js
         gameobjects.mapgrid.setUnit(100)                                 //menset unit panjang dan lebar tiap grid
-        gameobjects.mapgrid.setGridSize(61,60);                         //menset ukuran mapgrid
+        gameobjects.mapgrid.setGridSize(77,77);                         //menset ukuran mapgrid
         gameobjects.mapgrid.setCenter(15,15);                           //menset grid mana yang menjadi titik tengah
         gameobjects.mapgrid.initialize();                               //menginisialisasi grid -> lihat mapgrid.js
         
@@ -209,7 +209,7 @@ function Game(canvasid) {
                             gameobjects.layer[i][j]="isTrash";
                             break;
                         default:
-                            jerr(e.message, Error.ERROR);
+                            jerr(e.stack, Error.ERROR);
                             break;
                     }
                 }

@@ -168,11 +168,11 @@ function findPath(grid, pathStart, pathEnd)
 	function canWalkHere(x, y)
 	{
         if(grid[x][y] == 1){
-            console.log("Grid[" + x + "][" + y + "] = canWalk");
+            //console.log("Grid[" + x + "][" + y + "] = canWalk");
             return true;
         }
         else if(grid[x][y] == 2){
-            console.log("Grid[" + x + "][" + y + "] = building");
+            //console.log("Grid[" + x + "][" + y + "] = building");
             return false;
         }
 	};

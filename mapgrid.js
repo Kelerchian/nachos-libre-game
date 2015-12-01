@@ -62,7 +62,13 @@ function MapGrid(){
 		public.getCellPosition = function(x,y){
 			var rx = (x-centerposition.getX())*unit;
 			var ry = (y-centerposition.getY())*unit;
-			return new Position(rx,ry);
+			return Point(rx,ry);
+		}
+		public.getBiasedCellPosition = function(x,y,biasPercentage){
+			var biasedPos = public.getCellPosition(x,y)
+			if(typeof biasPercentage != "number"){biasPercentage = 100}
+			biasedPos.translate(Math.floor(Math.random()*unit*biasPercentage/100-(unit*biasPercentage/100)/2),Math.floor(Math.random()*unit/2*biasPercentage/100-(unit*biasPercentage/100)/2))
+			return biasedPos
 		}
 		public.occupy = function(x,y,w,h,gridtype){		//menset value dari grid-grid berbentuk persegi
 			if(x+w>width || y+h>height){

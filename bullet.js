@@ -1,4 +1,4 @@
-function Bullet(x,y,allegiance){
+function Bullet(x,y,allegiance,source){
 	var position = new Position(x,y);
 	var sourcePosition = new Position(x,y)
 	var physicalAttribute = new PhysicalAttribute();
@@ -9,15 +9,20 @@ function Bullet(x,y,allegiance){
 	var isTrash = false;
 	
 	function affectDynamicCollision(obj){
-		if(allegiance!=Allegiance.ENEMY){
-			if(obj.getAllegiance()==Allegiance.ENEMY){
-				obj.attacked(10);
+		var thispos = Point(source.getX(),source.getY())
+		if(allegiance != obj.getAllegiance()){
+			//console.log(allegiance,obj.getAllegiance())
+			if(allegiance!=Allegiance.ENEMY){
+				if(obj.getAllegiance()==Allegiance.ENEMY){
+					obj.attacked(10,thispos);
+				}
 			}
-		}
-		else{
-			if(obj.getAllegiance()!=Allegiance.ENEMY){
-				obj.attacked(10);
+			else{
+				if(obj.getAllegiance()!=Allegiance.ENEMY){
+					obj.attacked(10,thispos);
+				}
 			}
+			isTrash = true;
 		}
 	}
 	
@@ -63,7 +68,6 @@ function Bullet(x,y,allegiance){
 		}
 		public.affectDynamicCollision = function(obj){
 			affectDynamicCollision(obj);
-			isTrash = true;
 		}
 		public.setAllegiance = function(alleg){
 			allegiance = alleg
